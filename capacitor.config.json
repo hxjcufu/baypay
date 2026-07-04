@@ -1,0 +1,9 @@
+{
+  "appId": "com.baypay.app",
+  "appName": "BayPay",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "ios": {
+    "contentInset": "always"
+  }
+}

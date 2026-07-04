@@ -1,0 +1,46 @@
+workflows:
+  baypay-ios-unsigned:
+    name: BayPay iOS (без подписи / для симулятора)
+    environment:
+      node: 20
+    scripts:
+      - name: Install dependencies
+        script: npm install
+      - name: Add iOS platform
+        script: npx cap add ios
+      - name: Sync web assets
+        script: npx cap sync ios
+      - name: Build for iOS Simulator (без подписи)
+        script: |
+          cd ios/App
+          xcodebuild -workspace App.xcworkspace \
+            -scheme App \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            -derivedDataPath build
+    artifacts:
+      - ios/App/build/Build/Products/**/*.app
+
+  baypay-ios-signed:
+    name: BayPay iOS (подписанный .ipa для устройства)
+    environment:
+      node: 20
+      ios_signing:
+        distribution_type: ad_hoc
+        bundle_identifier: com.baypay.app
+    scripts:
+      - name: Install dependencies
+        script: npm install
+      - name: Add iOS platform
+        script: npx cap add ios
+      - name: Sync web assets
+        script: npx cap sync ios
+      - name: Set up code signing
+        script: xcode-project use-profiles
+      - name: Build ipa
+        script: |
+          xcode-project build-ipa \
+            --workspace "ios/App/App.xcworkspace" \
+            --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
